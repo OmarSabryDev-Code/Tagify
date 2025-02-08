@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "204162041289",
+    "project_id": "tagify2",
+    "storage_bucket": "tagify2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204162041289:android:084f6b22abecafc94e9418",
+        "android_client_info": {
+          "package_name": "com.example.tagify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204162041289-0rig8hma7bqtp27s4d0jk0sd6hnhq9hm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tagify",
+            "certificate_hash": "a44c11c75e5fb6186c21ee8215d51481bff63646"
+          }
+        },
+        {
+          "client_id": "204162041289-tavk2j5k1ndslag9poj1aq6t91hhtr3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcoERD4xnzkRRjtKEgxrR3tJy7BDnScSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204162041289-tavk2j5k1ndslag9poj1aq6t91hhtr3c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
