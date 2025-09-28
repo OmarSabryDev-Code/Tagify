@@ -31,4 +31,10 @@ class ItemsProvider with ChangeNotifier{
     selectedTask = task;
     notifyListeners();
   }
+
+  Future<void> clearUserItems(String userId) async {
+    await FirebaseFunctions.clearUserItems(userId);
+    items.clear();
+    notifyListeners();
+  }
 }

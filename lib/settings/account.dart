@@ -13,6 +13,7 @@ class Account extends StatelessWidget{
     var height = MediaQuery.sizeOf(context).height;
     var width = MediaQuery.sizeOf(context).width;
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             SizedBox(height: 16,),
@@ -22,13 +23,13 @@ class Account extends StatelessWidget{
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(width: 30,),
+                  SizedBox(width: 20,),
                   InkWell(
                     onTap: (){
                       Navigator.of(context).pop();
                     },
                       child: Icon(CupertinoIcons.xmark, color: AppTheme.darkGrey, weight: 2,)),
-                  SizedBox(width: 120,),
+                  SizedBox(width: 85,),
                   Text(
                     'Account',
                     style: Theme.of(context).textTheme.titleMedium,),
@@ -51,7 +52,7 @@ class Account extends StatelessWidget{
                           Image.asset('assets/images/brush.png'),
                           SizedBox(width: 16,),
                           Text('Personalize', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),),
-                          SizedBox(width: width * 0.45,),
+                          SizedBox(width: width * 0.34,),
                           Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.primary,),
                         ],
                       ),
@@ -59,14 +60,14 @@ class Account extends StatelessWidget{
                   ),
                   SizedBox(height: 32,),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 30),
                     child: Row(
                       children: [
                         //SizedBox(width: ,),
                         Image.asset('assets/images/chain.png'),
-                        SizedBox(width: 16,),
+                        SizedBox(width: 18,),
                         Text('Linking', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),),
-                        SizedBox(width: width * 0.54,),
+                        SizedBox(width: width * 0.42,),
                         InkWell(
                           onTap: (){
                             Navigator.of(context).pushNamed(Linking.routeName);

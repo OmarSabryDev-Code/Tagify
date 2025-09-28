@@ -12,6 +12,7 @@ class AccountSecurity extends StatelessWidget{
     var height = MediaQuery.sizeOf(context).height;
     var width = MediaQuery.sizeOf(context).width;
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             SizedBox(height: 16,),
@@ -27,7 +28,7 @@ class AccountSecurity extends StatelessWidget{
                       Navigator.of(context).pop();
                     },
                       child: Icon(CupertinoIcons.xmark, color: AppTheme.darkGrey, weight: 2,)),
-                  SizedBox(width: 70,),
+                  SizedBox(width: 20,),
                   Text(
                     'Account Security',
                     style: Theme.of(context).textTheme.titleMedium,),
@@ -40,13 +41,13 @@ class AccountSecurity extends StatelessWidget{
                 children: [
                   SizedBox(height: 32,),
                   Padding(
-                    padding: const EdgeInsets.only(left: 30),
+                    padding: const EdgeInsets.only(left: 15),
                     child: Row(
                       children: [
                         Image.asset('assets/images/factor.png'),
-                        SizedBox(width: 16,),
+                        SizedBox(width: 15,),
                         Text('Two Factor Authentication', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),),
-                        SizedBox(width: width * 0.2,),
+                        SizedBox(width: width * 0.07,),
                         InkWell(
                             onTap: (){
                             },

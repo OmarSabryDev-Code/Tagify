@@ -5,7 +5,6 @@ import 'package:tagify/cart/cart_item.dart';
 import 'package:tagify/cart/items_provider.dart';
 import 'package:tagify/firebase_functions.dart';
 import 'package:tagify/payment/payment_cards.dart';
-
 import '../app_theme.dart';
 import '../auth/user_provider.dart';
 
@@ -19,37 +18,58 @@ class _CartState extends State<Cart> {
   bool isLoading = true;
   String errorMessage = '';
 
-  @override
-  void initState() {
-    super.initState();
-    // Add listener to itemsProvider for item changes
-    Provider.of<ItemsProvider>(context, listen: false).addListener(_onItemsChanged);
-    _loadCartItems();
-  }
+  UserProvider? _userProvider;
+  ItemsProvider? _itemsProvider;
+  bool _isInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Fetch price whenever the screen rebuilds or items change
-    fetchTotalPrice();
+
+    if (!_isInitialized) {
+      _userProvider = Provider.of<UserProvider>(context, listen: false);
+      _itemsProvider = Provider.of<ItemsProvider>(context, listen: false);
+
+      if (_userProvider != null) {
+        _userProvider!.addListener(_onUserChanged);
+      }
+      if (_itemsProvider != null) {
+        _itemsProvider!.addListener(_onItemsChanged);
+      }
+
+      _loadCartItems();
+      _isInitialized = true; // Ensure this runs only once
+    }
   }
 
   @override
   void dispose() {
-    // Clean up the listener when the widget is disposed
-    Provider.of<ItemsProvider>(context, listen: false).removeListener(_onItemsChanged);
+    _userProvider?.removeListener(_onUserChanged);
+    _itemsProvider?.removeListener(_onItemsChanged);
     super.dispose();
+  }
+
+  void _onUserChanged() {
+    _loadCartItems();
   }
 
   void _onItemsChanged() {
     fetchTotalPrice();
   }
 
-  // Fetch the cart items from Firebase (or local storage) on screen load
   Future<void> _loadCartItems() async {
-    String userId = Provider.of<UserProvider>(context, listen: false).currentUser!.id;
+    if (_userProvider?.currentUser == null) {
+      setState(() {
+        errorMessage = 'No user logged in.';
+      });
+      return;
+    }
+
+    String userId = _userProvider!.currentUser!.id;
     try {
-      await Provider.of<ItemsProvider>(context, listen: false).getItems(userId);
+      await _itemsProvider!.getItems(userId);
+      setState(() {}); // Force UI update after items are fetched
+      fetchTotalPrice();
     } catch (error) {
       setState(() {
         errorMessage = 'Failed to load cart items. Please try again later.';
@@ -58,7 +78,9 @@ class _CartState extends State<Cart> {
   }
 
   Future<void> fetchTotalPrice() async {
-    String userId = Provider.of<UserProvider>(context, listen: false).currentUser!.id;
+    if (_userProvider?.currentUser == null) return;
+
+    String userId = _userProvider!.currentUser!.id;
     try {
       double fetchedTotal = await FirebaseFunctions.calculateTotalPrice(userId);
       setState(() {
@@ -75,154 +97,115 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
-    ItemsProvider itemsProvider = Provider.of<ItemsProvider>(context);
-    String userId = Provider.of<UserProvider>(context, listen: false).currentUser!.id;
-    bool hasCards = Provider.of<UserProvider>(context, listen: false).currentUser!.hasPayment;
+    final itemsProvider = Provider.of<ItemsProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    final userId = userProvider.currentUser?.id ?? '';
+    final hasCards = userProvider.currentUser?.hasPayment ?? false;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        toolbarHeight: 100, // Increased height
         title: Text(
           'Cart',
-          style: TextStyle(
-              fontSize: 38,
-              fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(fontSize: 38),
         ),
         centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Filter',
-              style: TextStyle(color: Colors.blue),
-            ),
-          ),
-        ],
       ),
+
       body: Column(
-        children: [
-          if (errorMessage.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                errorMessage,
-                style: const TextStyle(color: Colors.red, fontSize: 16),
+            children: [
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 20),
+                  itemCount: itemsProvider.items.length,
+                  itemBuilder: (_, index) {
+                    return Card(
+                      color: Colors.white,
+                      child: CartItem(itemsProvider.items[index]),
+                    );
+                  },
+                ),
               ),
-            ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: 20),
-              itemBuilder: (_, index) {
-                return Card(
-                  color: Colors.white,
-                  child: CartItem(
-                    itemsProvider.items[index],
-                  ),
-                );
-              },
-              itemCount: itemsProvider.items.length,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.primary,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Total Price:',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
-                isLoading
-                    ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
-                )
-                    : Text(
-                  '\$${total.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(PaymentCards.routeName, arguments: {
-                'total': total,
-                'cards': hasCards,
-                'items': itemsProvider.items,
-              });
-            },
-            child: Text(
-              'Continue to payment',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall
-                  ?.copyWith(color: AppTheme.white, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/visa.png', // Visa Logo
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
-                    const SizedBox(height: 8),
-                    const Text('InstaPay', style: TextStyle(fontSize: 12)),
                   ],
                 ),
-                Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
-                      'assets/images/insta.png', // Mastercard Logo
+                    const Text(
+                      'Total Price:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text('Visa', style: TextStyle(fontSize: 12)),
+                    isLoading
+                        ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                        : Text(
+                      '\$${total.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/vodaphone.png', // Vodafone Cash Logo
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      PaymentCards.routeName,
+                      arguments: {
+                        'total': total,
+                        'cards': hasCards,
+                        'items': itemsProvider.items,
+                      },
+                    );
+                  },
+                  child: Text(
+                    'Continue to payment',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: AppTheme.white,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 8),
-                    const Text('Vodafone Cash', style: TextStyle(fontSize: 12)),
-                  ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
+              ),
+            ],
+        ),
     );
-  }
+    }
 }

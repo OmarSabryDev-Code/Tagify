@@ -9,7 +9,8 @@ import 'package:tagify/models/card_model.dart';
 import 'package:tagify/models/profile_model.dart';
 import 'package:tagify/profile/profile_provider.dart';
 import 'package:tagify/auth/user_provider.dart';
-import 'package:tagify/models/order_model.dart';  // Import OrderModel
+import 'package:tagify/models/order_model.dart';
+import 'package:intl/intl.dart';
 
 class FirebaseFunctions {
   static CollectionReference<ItemModel> getItemCollection(String userId) =>
@@ -31,11 +32,6 @@ class FirebaseFunctions {
     DocumentReference<ItemModel> doc = itemCollection.doc();
     item.id = doc.id;
     return doc.set(item);
-  }
-
-  static Future<void> updateTaskInFirestore(ItemModel item, String userId) async {
-    CollectionReference<ItemModel> taskCollection = getItemCollection(userId);
-    return taskCollection.doc(item.id).update(item.toJson());
   }
 
   static Future<List<ItemModel>> getAllItemsFromFirestore(String userId) async {
@@ -176,6 +172,20 @@ class FirebaseFunctions {
     }
   }
 
+  static Future<void> clearUserItems(String userId) async {
+    try {
+      CollectionReference<ItemModel> itemCollection = getItemCollection(userId);
+      QuerySnapshot<ItemModel> querySnapshot = await itemCollection.get();
+
+      for (QueryDocumentSnapshot<ItemModel> doc in querySnapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      print("Error clearing user items: $e");
+      rethrow;
+    }
+  }
+
   static CollectionReference<ProfileModel> getProfileCollection() =>
       FirebaseFirestore.instance.collection('profiles').withConverter<ProfileModel>(
         fromFirestore: (docSnapshot, options) {
@@ -228,6 +238,35 @@ class FirebaseFunctions {
     } catch (e) {
       print("Error creating order: $e");
       rethrow;
+    }
+  }
+
+  static Future<List<OrderModel>> getOrdersByUserId(String userId) async {
+    try {
+      QuerySnapshot orderSnapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      return orderSnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+
+        // Convert Firestore timestamp to DateTime and format it
+        DateTime dateTime = (data['timestamp'] as Timestamp).toDate();
+        String formattedDate = DateFormat('MM/dd/yyyy').format(dateTime); // MM = month, dd = day, yyyy = year
+
+        return OrderModel(
+          id: doc.id,
+          date: formattedDate, // Use formatted date
+          total: data['totalAmount'].toString(),
+          items: (data['cartItems'] as List<dynamic>)
+              .map((itemJson) => ItemModel.fromJson(itemJson as Map<String, dynamic>))
+              .toList(),
+        );
+      }).toList();
+    } catch (e) {
+      print("Error fetching orders: $e");
+      return [];
     }
   }
 }

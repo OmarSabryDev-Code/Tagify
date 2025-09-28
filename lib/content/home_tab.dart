@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+//import 'package:tagify/Qr%20Code/qr_code.dart';
+import 'package:tagify/Scanner/barcode_scanner_page.dart';
 import 'package:tagify/content/item.dart';
 import 'package:tagify/content/item_detaile.dart';
 import 'package:tagify/settings/settings_screen.dart';
 
+import '../Scanner/barcode_generator_page.dart';
+
 class HomeTab extends StatefulWidget {
+
+  static const String routeName = '/HomePage'; // Added Route Name
+
+
   @override
   _HomeTabState createState() => _HomeTabState();
 }
@@ -14,15 +22,16 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         toolbarHeight: 100,
-        backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
           'Market',
           style: TextStyle(
             fontSize: 38,
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -33,7 +42,7 @@ class _HomeTabState extends State<HomeTab> {
             child: Text(
               'Filter',
               style: TextStyle(
-                color: Colors.blue,
+                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -168,18 +177,69 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Navigate to Barcode Scanner
+          final scannedCode = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BarcodeScannerPage()),
+          );
+
+          if (scannedCode != null) {
+            // Create the item details based on the scanned barcode
+            Item barItem = Item(
+              imageName: 'assets/images/image34.jpeg',
+              itemName: 'Smart Watch',
+              price: '799.99',
+              description: 'New Gen Smart Watch',
+            );
+
+            // Navigate to the Item Details screen with the scanned item
+            Navigator.of(context).pushNamed(
+              ItemDetails.routeName,
+              arguments: barItem,
+            );
+
+            print("Scanned Code: $scannedCode"); // Debugging output
+          }
+        },
+
+        backgroundColor: Colors.white,
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(90),
+            border: Border.all(
+              color: Colors.white,
+              width: 1,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(200),
+            child: Image.asset(
+              'assets/images/barcode.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildSection(BuildContext context, {required String title, required List<Item> items}) {
-    return Padding(
+    return Container(
+      color: Colors.white, // ✅ Ensures background is always white
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,  // ✅ Ensures text is always black
+            ),
           ),
           SizedBox(height: 10),
           SizedBox(
@@ -190,18 +250,21 @@ class _HomeTabState extends State<HomeTab> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Card(
+                  color: Colors.white, // ✅ Ensures Card background is white
+                  elevation: 2,
+                  margin: EdgeInsets.only(right: 10, bottom: 25),
                   child: InkWell(
                     onTap: () {
                       setState(() {
                         selectedItem = item;
-                        Navigator.of(context).pushNamed(ItemDetails.routeName,arguments: selectedItem);
+                        Navigator.of(context).pushNamed(
+                          ItemDetails.routeName,
+                          arguments: selectedItem,
+                        );
                       });
                     },
                     child: item,
                   ),
-                  color: Colors.white,
-                  elevation: 0,
-                  margin: EdgeInsets.only(right: 10),
                 );
               },
             ),
@@ -210,4 +273,5 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
+
 }

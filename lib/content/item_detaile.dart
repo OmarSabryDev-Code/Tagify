@@ -12,6 +12,7 @@ import '../firebase_functions.dart';
 class ItemDetails extends StatefulWidget{
   static String routeName = '/details';
 
+
   @override
   State<ItemDetails> createState() => _ItemDetailsState();
 }
@@ -25,6 +26,7 @@ class _ItemDetailsState extends State<ItemDetails> {
   Widget build(BuildContext context) {
     currentItem = ModalRoute.of(context)!.settings.arguments as Item;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Item Description', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
         centerTitle: true,

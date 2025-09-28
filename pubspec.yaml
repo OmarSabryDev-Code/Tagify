@@ -39,6 +39,11 @@ dependencies:
   firebase_auth: ^5.3.1
   google_sign_in: ^5.4.2
   firebase_storage: 12.3.7
+  mobile_scanner: ^3.2.0
+  shared_preferences: ^2.2.2
+  intl: ^0.18.0
+  url_launcher: ^6.1.14
+
   #flutter_paypal: ^0.0.9
 
 
@@ -48,10 +53,26 @@ dependencies:
   cupertino_icons: ^1.0.8
   permission_handler: ^11.3.1
   flutter_braintree: ^4.0.0
+  flutter_screenutil: ^5.9.3
+  barcode: ^2.2.9
+  flutter_svg: ^2.0.17
+  #barcode_widget: ^2.0.4
+  #flutter_barcode_scanner: ^2.0.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
+
+
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/FIO.jpg"  # Path to your app icon (512x512 or 1024x1024 recommended)
+  adaptive_icon_background: "#000000"  # (Optional) Background color for Android adaptive icons
+  adaptive_icon_foreground: "assets/images/FIO.jpg"  # (Optional) Foreground for Android adaptive icons
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

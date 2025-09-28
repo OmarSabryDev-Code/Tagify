@@ -60,6 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: Colors.white, // ✅ Explicitly set white background
       body: SafeArea(
         child: Column(
           children: [
@@ -71,6 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 38,
                   fontWeight: FontWeight.bold,
+                  color: Colors.black, // ✅ Ensures text stays black
                 ),
               ),
             ),
@@ -110,23 +112,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.asset('assets/images/bell.png', width: 40, height: 40),
-                        const SizedBox(width: 16),
-                        Text(
-                          'Notifications',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),
+                        Row(
+                          children: [
+                            Image.asset('assets/images/bell.png', width: 35, height: 35),
+                            const SizedBox(width: 16),
+                            Text(
+                              'Notifications',
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.black, // ✅ Ensures text stays black
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: width * 0.381),
                         Transform.scale(
-                          scale: 0.8,
+                          scale: 0.9,
                           child: Switch(
-                            activeColor: AppTheme.white,
+                            activeColor: Colors.white,
                             activeTrackColor: AppTheme.primary,
                             inactiveTrackColor: AppTheme.darkGrey,
-                            inactiveThumbColor: AppTheme.black,
+                            inactiveThumbColor: Colors.black,
                             value: notifs,
-                            onChanged: _toggleNotifications, // Uses the permission logic
+                            onChanged: _toggleNotifications,
                           ),
                         ),
                       ],
@@ -146,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          Image.asset(image, width: 40, height: 40),
+          Image.asset(image, width: 35, height: 35),
           const SizedBox(width: 16),
           Expanded(
             child: Text(

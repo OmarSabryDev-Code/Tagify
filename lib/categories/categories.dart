@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tagify/Scanner/barcode_scanner_page.dart';
+import 'package:tagify/categories/Arts.dart';
 import 'package:tagify/categories/Beauty.dart';
 import 'package:tagify/categories/Electronics.dart';
 import 'package:tagify/categories/Fashion.dart';
@@ -14,11 +16,12 @@ class Categories extends StatelessWidget {
       {'image': 'assets/images/fashion.jpg', 'name': 'Fashion'},
       {'image': 'assets/images/elect.jpg', 'name': 'Electronics'},
       {'image': 'assets/images/sport.jpg', 'name': 'Sports'},
-      {'image': 'assets/images/tech.jpg', 'name': 'Technology'},
+      {'image': 'assets/images/Arts&Crafts.jpg', 'name': 'Arts'},
       {'image': 'assets/images/pet.png', 'name': 'Pets'},
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 100,
         backgroundColor: Colors.white,
@@ -75,30 +78,20 @@ class Categories extends StatelessWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    if (categories[index]['name'] == 'Beauty') {
-                      Navigator.of(context).pushNamed(Beauty.routeName);
+                    final routes = {
+                      'Beauty': Beauty.routeName,
+                      'Fashion': Fashion.routeName,
+                      'Electronics': Electronics.routeName,
+                      'Sports': Sports.routeName,
+                      'Pets': Pets.routeName,
+                      'Arts': Arts.routeName,
+                    };
+
+                    final routeName = routes[categories[index]['name']];
+                    if (routeName != null) {
+                      Navigator.of(context).pushNamed(routeName);
                     } else {
-                      print('Tapped on ${categories[index]['name']}'); // Debugging for other categories
-                    }
-                    if (categories[index]['name'] == 'Fashion') {
-                      Navigator.of(context).pushNamed(Fashion.routeName);
-                    } else {
-                      print('Tapped on ${categories[index]['name']}'); // Debugging for other categories
-                    }
-                    if (categories[index]['name'] == 'Electronics') {
-                      Navigator.of(context).pushNamed(Electronics.routeName);
-                    } else {
-                      print('Tapped on ${categories[index]['name']}'); // Debugging for other categories
-                    }
-                    if (categories[index]['name'] == 'Sports') {
-                      Navigator.of(context).pushNamed(Sports.routeName);
-                    } else {
-                      print('Tapped on ${categories[index]['name']}'); // Debugging for other categories
-                    }
-                    if (categories[index]['name'] == 'Pets') {
-                      Navigator.of(context).pushNamed(Pets.routeName);
-                    } else {
-                      print('Tapped on ${categories[index]['name']}'); // Debugging for other categories
+                      print('Tapped on ${categories[index]['name']}');
                     }
                   },
                   child: Container(
@@ -142,7 +135,15 @@ class Categories extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {}, // Example action
+        onPressed: () async {
+          final scannedCode = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BarcodeScannerPage()),
+          );
+          if (scannedCode != null) {
+            print("Scanned Code: $scannedCode"); // Handle the scanned code here
+          }
+        },
         backgroundColor: Colors.white,
         child: Container(
           width: 50,

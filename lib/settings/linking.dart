@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class Linking extends StatelessWidget {
   static const String routeName = '/linking';
@@ -40,6 +42,7 @@ class Linking extends StatelessWidget {
     } catch (e) {
       _showError(context, 'Failed to link Facebook account: $e');
     }
+
   }
 
   // Function to link Gmail account
@@ -106,7 +109,7 @@ class Linking extends StatelessWidget {
                   },
                   child: const Icon(CupertinoIcons.xmark, color: AppTheme.darkGrey, weight: 2),
                 ),
-                const SizedBox(width: 120),
+                const SizedBox(width: 80),
                 Text(
                   'Linking',
                   style: Theme.of(context).textTheme.titleMedium,
@@ -115,37 +118,38 @@ class Linking extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(left: 8, right: 8, top: 16),
+            margin: const EdgeInsets.only(left: 8, right: 23, top: 16),
             child: Column(
               children: [
                 const SizedBox(height: 32),
                 // Twitter Row
                 InkWell(
-                  onTap: () {},
-                  child: _buildRow(context, 'assets/images/twitter.png', 'Twitter'),
+                  onTap: () => _openUrl('https://twitter.com/'), // Opens Twitter website
+                  child: _buildRow(context, 'assets/images/T2.png', 'Twitter'),
                 ),
                 const SizedBox(height: 32),
                 // Instagram Row
                 InkWell(
-                  onTap: () => _linkInstagram(context),
-                  child: _buildRow(context, 'assets/images/instagram.png', 'Instagram'),
+                  onTap: () => _openUrl('https://instagram.com/'),
+                  child: _buildRow(context, 'assets/images/In5.png', 'Instagram'),
                 ),
                 const SizedBox(height: 32),
-                // Facebook Row
+
                 InkWell(
-                  onTap: () => _linkFacebook(context),
+                  onTap: () => _openUrl('https://facebook.com/'),
                   child: _buildRow(context, 'assets/images/facebook.png', 'Facebook'),
                 ),
+
                 const SizedBox(height: 32),
                 // Gmail Row
                 InkWell(
-                  onTap: () => _linkGoogle(context),
+                  onTap: () => _openUrl('https://accounts.google.com/'),
                   child: _buildRow(context, 'assets/images/gmail.png', 'Gmail'),
                 ),
                 const SizedBox(height: 32),
                 // Microsoft Outlook Row
                 InkWell(
-                  onTap: () => _linkMicrosoft(context),
+                  onTap: () => _openUrl('https://outlook.live.com/'),
                   child: _buildRow(context, 'assets/images/outlook.png', 'Microsoft Outlook'),
                 ),
               ],
@@ -159,19 +163,36 @@ class Linking extends StatelessWidget {
   // Helper function to build each row
   Widget _buildRow(BuildContext context, String iconPath, String platformName) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16),
+      padding: const EdgeInsets.only(left: 16, right: 16), // Ensures equal left & right padding
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center, // Aligns items vertically
         children: [
-          Image.asset(iconPath),
-          const SizedBox(width: 16),
-          Text(
-            platformName,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),
+          Image.asset(
+            iconPath,
+            width: 60,  // Ensures all images have the same width
+            height: 60, // Ensures all images have the same height
+            fit: BoxFit.contain, // Prevents distortion
           ),
-          const Spacer(),
+          const SizedBox(width: 16),
+          Expanded( // Ensures text is aligned and doesn't overflow
+            child: Text(
+              platformName,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),
+            ),
+          ),
           const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.primary),
         ],
       ),
     );
   }
+  Future<void> _openUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
 }

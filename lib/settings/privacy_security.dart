@@ -13,6 +13,7 @@ class PrivacySecurity extends StatelessWidget{
     var height = MediaQuery.sizeOf(context).height;
     var width = MediaQuery.sizeOf(context).width;
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             SizedBox(height: 16,),
@@ -28,9 +29,9 @@ class PrivacySecurity extends StatelessWidget{
                       Navigator.of(context).pop();
                     },
                       child: Icon(CupertinoIcons.xmark, color: AppTheme.darkGrey, weight: 2,)),
-                  SizedBox(width: 60,),
+                  SizedBox(width: 80,),
                   Text(
-                    'Privacy and Security',
+                    'Privacy',
                     style: Theme.of(context).textTheme.titleMedium,),
                 ],
               ),
@@ -41,13 +42,13 @@ class PrivacySecurity extends StatelessWidget{
                 children: [
                   SizedBox(height: 32,),
                   Padding(
-                    padding: const EdgeInsets.only(left: 30),
+                    padding: const EdgeInsets.only(left: 25),
                     child: Row(
                       children: [
                         Image.asset('assets/images/pin.png'),
                         SizedBox(width: 16,),
                         Text('Location', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.black),),
-                        SizedBox(width: width * 0.55,),
+                        SizedBox(width: width * 0.46,),
                         InkWell(
                             onTap: (){
                             },

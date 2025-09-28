@@ -17,7 +17,8 @@ class _Beauty extends State<Beauty> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 100,
-        backgroundColor: Color(0xeae8e9),
+        backgroundColor: Color(0xffeae6e6),
+
         elevation: 0,
         title: Text(
           'Beauty',

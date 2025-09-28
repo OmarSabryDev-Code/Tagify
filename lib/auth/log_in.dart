@@ -44,14 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               SizedBox(height: 50),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.close, size: 28),
-                    onPressed: () {
-                      Navigator.pop(context); // Close action
-                    },
-                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacementNamed(
@@ -332,6 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (error) {
       Fluttertoast.showToast(msg: "Error signing in: ${error.toString()}");
+      print(error);
     }
   }
 }

@@ -10,6 +10,9 @@ android {
     namespace = "com.example.tagify"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    //namespace "com.amolg.flutter_barcode_scanner" // Use the package name of the plugin
+
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

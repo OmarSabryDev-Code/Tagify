@@ -28,18 +28,9 @@ class _DefaultTextFormFieldState extends State<DefaultTextFormField> {
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: widget.hintText,
-        hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(color: AppTheme.darkGrey),
-        suffix: widget.isPassword ? TextButton(
-          onPressed: (){
-            isObscure = !isObscure;
-            setState(() {});
-          },
-          child: Text(isObscure
-              ? 'Show'
-                  : 'Hide', style: Theme.of(context).textTheme.titleSmall
-        ),
-        )
-        : null,
+        hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(color: AppTheme.darkGrey, fontWeight: FontWeight.bold, fontSize: 18),
+
+
       ),
       validator: widget.validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,

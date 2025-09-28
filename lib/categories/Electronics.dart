@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tagify/Scanner/barcode_scanner_page.dart';
 import 'package:tagify/content/item.dart';
 import 'package:tagify/content/item_detaile.dart';
 import 'package:tagify/settings/settings_screen.dart';
@@ -186,7 +187,39 @@ class _Electronics extends State<Electronics> {
               ],
             ),
           ],
-        )
+        ),
+      /*
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final scannedCode = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BarcodeScannerPage()),
+          );
+          if (scannedCode != null) {
+            print("Scanned Code: $scannedCode"); // Handle the scanned code here
+          }
+        },
+        backgroundColor: Colors.white,
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(90),
+            border: Border.all(
+              color: Colors.white,
+              width: 1,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(200),
+            child: Image.asset(
+              'assets/images/barcode.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+*/
     );
   }
 

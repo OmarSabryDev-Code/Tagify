@@ -47,20 +47,20 @@ class _CardItemState extends State<CardItem> {
               borderRadius: BorderRadius.circular(15),
               child: Image.asset('assets/images/visaa.jpg', width: 90, height: 50),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 10),
 
             // Card Number (Last 4 Digits)
             Expanded(
               child: Text(
-                '**** **** **** ${widget.card.cardNumber.substring(widget.card.cardNumber.length - 4)}',
+                '**** ${widget.card.cardNumber.substring(widget.card.cardNumber.length - 4)}',
                 style: TextStyle(
                   color: isSelected ? AppTheme.black : Colors.white,
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-
+            const SizedBox(width: 3),
             // Selected Check Icon
             if (isSelected)
               const Icon(Icons.check_circle, color: Colors.green, size: 28),
@@ -68,7 +68,7 @@ class _CardItemState extends State<CardItem> {
             // Delete Icon
             IconButton(
               icon: const Icon(CupertinoIcons.trash, color: Colors.redAccent, size: 25),
-              onPressed: () => _deleteCard(context),
+              onPressed: () => _deleteCard(context, cardsProvider),
             ),
           ],
         ),
@@ -77,7 +77,7 @@ class _CardItemState extends State<CardItem> {
   }
 
   // Handle Card Deletion
-  void _deleteCard(BuildContext context) {
+  void _deleteCard(BuildContext context, CardsProvider cardsProvider) {
     String userId = Provider.of<UserProvider>(context, listen: false).currentUser!.id;
     String cardId = widget.card.id;
 
@@ -94,8 +94,32 @@ class _CardItemState extends State<CardItem> {
             ),
             TextButton(
               onPressed: () async {
-                await FirebaseFunctions.removeCard(userId, cardId);
-                Navigator.of(context).pop();
+                try {
+                  cardsProvider.removeCard(userId, cardId); // Remove card from provider state
+
+                  // If the deleted card was selected, clear selection
+                  if (cardsProvider.selectedCard == widget.card) {
+                    cardsProvider.clearSelection();
+                  }
+
+                  Navigator.of(context).pop();
+                } catch (error) {
+                  // Handle deletion error
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Error'),
+                      content: const Text('Failed to delete the card. Please try again.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(),
+                          child: const Text('Okay'),
+                        ),
+                      ],
+                    ),
+                  );
+                  print(error);
+                }
               },
               child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
             ),
