@@ -34,3 +34,11 @@ Or simply **order products online** and get them delivered at your preferred tim
 - **Firebase Authentication (Google/Gmail login)**.  
 - **Payment Integration** — Credit card & Visa payments.  
 - **Backend integrations** for product data and orders.  
+
+---
+
+## 👨‍💻 Author
+Developed by **Omar Sabry**  
+- 🎓 Computer Science Graduate — Arab Academy for Science, Technology & Maritime Transport  
+- 💻 Mobile & Game Developer  
+- 🌍 Focused on creating innovative digital solutions  
